@@ -30,6 +30,19 @@ const meta = {
   order: 60,
 };
 
+function matchesTriggerWords(text: string, triggerWords?: string[]): boolean {
+  const normalizedWords = (triggerWords ?? [])
+    .map((word) => word.trim().toLowerCase())
+    .filter(Boolean);
+
+  if (normalizedWords.length === 0) {
+    return true;
+  }
+
+  const content = text.toLowerCase();
+  return normalizedWords.some((word) => content.includes(word));
+}
+
 export const miGPTPlugin: ChannelPlugin<ResolvedMiAccount> = {
   id: 'migpt',
   meta: {
@@ -216,6 +229,14 @@ export const miGPTPlugin: ChannelPlugin<ResolvedMiAccount> = {
             const msg = await MiMessage.fetchNextMessage(deviceName);
             if (msg) {
               log?.info(`[migpt:${account.accountId}] Received message from ${deviceName}: ${msg.text.slice(0, 50)}...`);
+
+              const triggerWords = account.config.triggerWords ?? cfg.channels?.migpt?.triggerWords;
+              if (!matchesTriggerWords(msg.text, triggerWords)) {
+                log?.debug?.(
+                  `[migpt:${account.accountId}] Skip message from ${deviceName}: no trigger word matched`,
+                );
+                continue;
+              }
 
               // ============ 收到消息时回复收到 ============
               const acknowledgeOnReceive = account.config.acknowledgeOnReceive

@@ -40,6 +40,8 @@ export interface MiGPTConfig extends MiServiceConfig {
   acknowledgeOnReceive?: boolean;
   /** 收到消息回复文案 */
   receiveMessage?: string;
+  /** 触发词列表，仅命中触发词时才处理消息 */
+  triggerWords?: string[];
 }
 
 /**
@@ -62,6 +64,8 @@ export interface MiGPTAccountConfig extends MiServiceConfig {
   acknowledgeOnReceive?: boolean;
   /** 收到消息回复文案 */
   receiveMessage?: string;
+  /** 触发词列表，仅命中触发词时才处理消息 */
+  triggerWords?: string[];
 }
 
 /**
@@ -128,6 +132,7 @@ export function resolveMiAccount(
     timeout: accountConfig.timeout ?? migptCfg?.timeout,
     devices: accountConfig.devices ?? migptCfg?.devices ?? [],
     speakerControl: accountConfig.speakerControl ?? migptCfg?.speakerControl,
+    triggerWords: accountConfig.triggerWords ?? migptCfg?.triggerWords,
   };
 
   // 检查是否已配置

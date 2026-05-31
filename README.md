@@ -36,7 +36,8 @@ openclaw plugins install ./migpt-claw-1.0.0.tgz
       "announceOnStart": true,
       "startupMessage": "您的小龙虾已上线，随时为您服务",
       "acknowledgeOnReceive": true,
-      "receiveMessage": "收到，处理中"
+      "receiveMessage": "收到，处理中",
+      "triggerWords": []
     }
   }
 }
@@ -51,6 +52,7 @@ openclaw plugins install ./migpt-claw-1.0.0.tgz
 - `startupMessage`：上线播报文案
 - `acknowledgeOnReceive`：收到消息时是否回复提示
 - `receiveMessage`：收到消息回复文案
+- `triggerWords`：触发词列表，仅当消息包含任一触发词时才处理；为空时表示不过滤
 - `speakerControl`：音箱控制方式（`mina` 或 `miot`，默认 `mina`）
 
 ### 音箱控制方式说明

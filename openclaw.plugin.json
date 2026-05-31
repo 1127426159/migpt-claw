@@ -58,6 +58,12 @@
         "type": "string",
         "description": "收到消息回复文案",
         "default": "收到，处理中"
+      },
+      "triggerWords": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "触发词列表，仅命中触发词时才处理消息",
+        "default": []
       }
     }
   },
@@ -107,6 +113,10 @@
     "receiveMessage": {
       "label": "回复文案",
       "placeholder": "收到，处理中"
+    },
+    "triggerWords": {
+      "label": "触发词列表",
+      "placeholder": "龙虾，claw"
     }
   }
 }
