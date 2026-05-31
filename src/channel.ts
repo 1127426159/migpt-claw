@@ -30,6 +30,8 @@ const meta = {
   order: 60,
 };
 
+const initializedSessionPrompts = new Set<string>();
+
 function matchesTriggerWords(text: string, triggerWords?: string[]): boolean {
   const normalizedWords = (triggerWords ?? [])
     .map((word) => word.trim().toLowerCase())
@@ -334,10 +336,17 @@ export const miGPTPlugin: ChannelPlugin<ResolvedMiAccount> = {
 - 消息 ID: ${deviceName}-${msg.timestamp}
 - 当前时间：${new Date(msg.timestamp).toLocaleString('zh-CN')}`;
 
-              // BodyForAgent: AI 实际看到的完整上下文（动态数据 + 系统提示 + 用户输入）
-              const agentBody = systemPrompts.length > 0
-                ? `${contextInfo}\n\n${systemPrompts.join("\n\n")}\n\n${msg.text}`
-                : `${contextInfo}\n\n${DEFAULT_SPEAKER_PROMPT}\n\n${msg.text}`;
+              // BodyForAgent：仅在会话首条消息注入上下文与系统提示，后续仅传用户输入
+              const isFirstMessageInSession = !initializedSessionPrompts.has(sessionKey);
+              if (isFirstMessageInSession) {
+                initializedSessionPrompts.add(sessionKey);
+              }
+
+              const agentBody = isFirstMessageInSession
+                ? (systemPrompts.length > 0
+                  ? `${contextInfo}\n\n${systemPrompts.join("\n\n")}\n\n${msg.text}`
+                  : `${contextInfo}\n\n${DEFAULT_SPEAKER_PROMPT}\n\n${msg.text}`)
+                : msg.text;
 
               // 构建上下文
               const ctxPayload = pluginRuntime.channel.reply.finalizeInboundContext({
